@@ -1,8 +1,9 @@
-# Farmer-Agent
+🧑‍🌾 Farming Assistant 🧑‍🌾
 This code builds a farming assistant using Crew.ai. It gathers info from farmers & provides advice, planting calendars & and itineraries. It can access a knowledge base or search the web for details to create the itinerary.
 
 
 Farming Assistant 🧑‍🌾
+
 Welcome to the Farming Assistant project! This project aims to provide farmers with personalized farming advice, create farming calendars, and offer detailed planting itineraries based on location, crop selection, and planting season.
 
 Features
@@ -39,4 +40,14 @@ Customization:
 You can customize the behavior of the agents, tasks, and crew by modifying the code in the main.py file.
 Additionally, you can extend the functionality of the program by adding new agents, tasks, or modifying existing ones.
 Contributing
-Contributions to the Farming Assistant project are welcome! If you have any ideas for improvements or new features, feel free to open an issue or submit a pull request.
+Contributions to the Farming Assistant project are welcome! Feel free to open an issue or submit a pull request if you have any ideas for improvements or new features.
+License
+This project is licensed under the MIT License.
+Credits
+Founder: João Moura
+GitHub: @joaomdmoura
+Email: joaomdmoura@gmail.com
+Website: http://joaomdmoura.com
+Twitter: @joaomdmoura
+
+The Farming Assistant project is based on the crewAI framework developed by João Moura. His contributions and efforts in creating crewAI have been instrumental in the development of this project.
