@@ -1,40 +1,10 @@
-import requests
+import os
 import datetime
 from crewai import Agent, Task, Crew, Process
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 # Define Google LLM for interacting with Google Calendar
-
-
-llm = ChatGoogleGenerativeAI(model="gemini-pro", verbose=True, temperature=0.6, google_api_key="-----------") #API_KEY_HERE
-
-class AgronomistAgent(Agent):
-    """
-    Agronomist agent responsible for providing detailed farming advice and constructing planting itineraries.
-    """
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-    
-    def retrieve_itinerary(self, crop, location):
-        """
-        Retrieve planting itinerary from a pre-defined knowledge base.
-        """
-        # Query the knowledge base with crop and location to retrieve the itinerary
-        # Implement logic to access the database or knowledge base
-        # Return the retrieved itinerary
-        
-    def construct_itinerary(self, crop, location):
-        """
-        Construct planting itinerary by leveraging external resources.
-        """
-        # Use ChatGoogleGenerativeAI to generate search queries based on crop and location
-        query = f"{crop} planting schedule {location}"
-        
-        # Send search query to Google or specific websites
-        response = requests.get("https://example.com", params={"q": query})
-        
-        # Extract relevant information from the response (e.g., parsing HTML)
-        # Construct the planting itinerary based on the extracted information
+llm = ChatGoogleGenerativeAI(model="gemini-pro", verbose=True, temperature=0.6, google_api_key="") #google api key
 
 # Define Farmer Agent
 farmer_agent = Agent(
@@ -47,10 +17,10 @@ farmer_agent = Agent(
 )
 
 # Define Agronomist Agent
-agronomist_agent = AgronomistAgent(
+agronomist_agent = Agent(
     role='Agronomist Local Expert at this city',
     goal='Provide best personalized farming advice based on weather, season, and prices of the selected city',
-    backstory='An expert that  specialized in providing personalized farming advice based on location and crop.',
+    backstory='An expert that specialized in providing personalized farming advice based on location and crop.',
     verbose=True,
     allow_delegation=False,
     llm=llm
@@ -59,9 +29,8 @@ agronomist_agent = AgronomistAgent(
 # Define Planner Agent
 planner_agent = Agent(
     role='Amazing Planner Agent',
-    goal='Create the most amazing plamting calendar with budget and best farming practice '
-    ,
-    backstory='Specialist in farm management an agronimist with decades of experience calendar based on the provided information.',
+    goal='Create the most amazing planting calendar with budget and best farming practice ',
+    backstory='Specialist in farm management an agronomist with decades of experience calendar based on the provided information.',
     verbose=True,
     allow_delegation=False,
     llm=llm
@@ -95,10 +64,17 @@ season_check_task = Task(
     expected_output='Planting season status checked.'
 )
 
+# Define Task for displaying farming itinerary
+farming_itinerary_task = Task(
+    description='Display farming itinerary for {crop} in {location} starting from {start_date}.',
+    agent=agronomist_agent,
+    expected_output='Farming itinerary displayed.'
+)
+
 # Create a Crew for managing the farming process
 farming_crew = Crew(
     agents=[farmer_agent, agronomist_agent, planner_agent],
-    tasks=[planting_info_task, farming_advice_task, farming_calendar_task, season_check_task],
+    tasks=[planting_info_task, farming_advice_task, farming_calendar_task, season_check_task, farming_itinerary_task],
     verbose=True,
     process=Process.sequential
 )
@@ -120,6 +96,7 @@ farming_advice_task.interpolate_inputs({"crop": crop, "location": location, "sta
 farming_calendar_task.interpolate_inputs({"crop": crop, "location": location, "start_date": start_date})
 current_date = datetime.date.today()
 season_check_task.interpolate_inputs({"crop": crop, "location": location, "current_date": current_date})
+farming_itinerary_task.interpolate_inputs({"crop": crop, "location": location, "start_date": start_date})
 
 # Execute the farming crew
 print("\nExecuting farming tasks...")
@@ -130,3 +107,7 @@ if output:
     print("\nFarming calendar generated successfully.")
 else:
     print("\nThere was an error generating the farming calendar. Please try again later.")
+
+
+
+
